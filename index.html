@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaty</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f4;
+            --text-color: #000;
+            --input-bg: #fff;
+            --button-bg: #007BFF;
+            --button-text: #fff;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #333;
+            --text-color: #fff;
+            --input-bg: #555;
+            --button-bg: #1E90FF;
+            --button-text: #fff;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            background: var(--input-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            flex-grow: 1;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input, .name-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+        .chat-button {
+            padding: 10px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .theme-button {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+        @media (max-width: 600px) {
+            .chat-container {
+                width: 90%;
+                padding: 10px;
+            }
+            .input-group {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .chat-button, .theme-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="chat-container">
+        <button class="theme-button" id="theme-button">🌙</button>
+        <div id="chat-box" class="chat-box"></div>
+        <div class="input-group">
+            <input type="text" id="name-input" class="name-input" placeholder="Enter your name">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Enter your message">
+            <button id="chat-button" class="chat-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('chat-button').addEventListener('click', function() {
+            var name = document.getElementById('name-input').value;
+            var message = document.getElementById('chat-input').value;
+            if (name.trim() && message.trim()) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "send_message.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        document.getElementById('chat-input').value = '';
+                        loadMessages();
+                    }
+                };
+                xhr.send("name=" + encodeURIComponent(name) + "&message=" + encodeURIComponent(message));
+            }
+        });
+
+        function loadMessages() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "load_messages.php", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById('chat-box').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+        setInterval(loadMessages, 2000); // Refresh messages every 2 seconds
+        loadMessages(); // Initial load
+
+        document.getElementById('theme-button').addEventListener('click', function() {
+            var body = document.body;
+            var currentTheme = body.getAttribute('data-theme');
+            if (currentTheme === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-button').innerText = '☀️';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                document.getElementById('theme-button').innerText = '🌙';
+            }
+        });
+    </script>
+</body>
+</html>
