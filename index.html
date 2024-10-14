@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaty</title>
+    <title>Chat App</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         :root {
             --bg-color: #f4f4f4;
@@ -11,6 +12,9 @@
             --input-bg: #fff;
             --button-bg: #007BFF;
             --button-text: #fff;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 10px;
+            --chat-border-radius: 15px 15px 0 0;
         }
 
         [data-theme="dark"] {
@@ -19,6 +23,22 @@
             --input-bg: #555;
             --button-bg: #1E90FF;
             --button-text: #fff;
+        }
+
+        [data-theme="solarized"] {
+            --bg-color: #fdf6e3;
+            --text-color: #657b83;
+            --input-bg: #eee8d5;
+            --button-bg: #b58900;
+            --button-text: #fff;
+        }
+
+        [data-theme="high-contrast"] {
+            --bg-color: #000;
+            --text-color: #fff;
+            --input-bg: #444;
+            --button-bg: #ffcc00;
+            --button-text: #000;
         }
 
         body {
@@ -34,8 +54,8 @@
         .chat-container {
             background: var(--input-bg);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             width: 100%;
             max-width: 600px;
             display: flex;
@@ -48,6 +68,8 @@
             border: 1px solid #ddd;
             padding: 10px;
             flex-grow: 1;
+            border-radius: var(--chat-border-radius);
+            box-shadow: inset var(--box-shadow);
         }
         .input-group {
             display: flex;
@@ -57,9 +79,10 @@
             flex-grow: 1;
             padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             background: var(--input-bg);
             color: var(--text-color);
+            box-shadow: var(--box-shadow);
         }
         .chat-button {
             padding: 10px;
@@ -67,7 +90,8 @@
             color: var(--button-text);
             border: none;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
         .theme-button {
             margin-bottom: 10px;
@@ -76,8 +100,9 @@
             color: var(--button-text);
             border: none;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             width: 100%;
+            box-shadow: var(--box-shadow);
         }
         @media (max-width: 600px) {
             .chat-container {
@@ -96,7 +121,7 @@
 </head>
 <body data-theme="light">
     <div class="chat-container">
-        <button class="theme-button" id="theme-button">🌙</button>
+        <button class="theme-button" id="theme-button">Switch to Midnight Muse</button>
         <div id="chat-box" class="chat-box"></div>
         <div class="input-group">
             <input type="text" id="name-input" class="name-input" placeholder="Enter your name">
@@ -106,6 +131,14 @@
     </div>
 
     <script>
+        const themes = [
+            { name: "Radiant Dawn", value: "light" },
+            { name: "Midnight Muse", value: "dark" },
+            { name: "Golden Hour", value: "solarized" },
+            { name: "Stark Symphony", value: "high-contrast" }
+        ];
+        let currentThemeIndex = 0;
+
         document.getElementById('chat-button').addEventListener('click', function() {
             var name = document.getElementById('name-input').value;
             var message = document.getElementById('chat-input').value;
@@ -138,15 +171,10 @@
         loadMessages(); // Initial load
 
         document.getElementById('theme-button').addEventListener('click', function() {
-            var body = document.body;
-            var currentTheme = body.getAttribute('data-theme');
-            if (currentTheme === 'light') {
-                body.setAttribute('data-theme', 'dark');
-                document.getElementById('theme-button').innerText = '☀️';
-            } else {
-                body.setAttribute('data-theme', 'light');
-                document.getElementById('theme-button').innerText = '🌙';
-            }
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            var newTheme = themes[currentThemeIndex];
+            document.body.setAttribute('data-theme', newTheme.value);
+            document.getElementById('theme-button').innerText = `Switch to ${themes[(currentThemeIndex + 1) % themes.length].name}`;
         });
     </script>
 </body>
