@@ -6,4 +6,4 @@ a chat web app made using js and html and php
 - [x] more themes
 - [x]  amoled/obsidian mode in the chaty like discord mobile app it wiil be added as an easter egg this is not added as an easter egg
 - [ ] login and register so noone can send with same username (i am confused in this)
-<br> #more todo soon
+<br> #this project development is stopped by me soon I will start
